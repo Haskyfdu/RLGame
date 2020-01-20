@@ -1,7 +1,36 @@
 import random
 
-# Color = ['Red', 'Blue', 'White', 'Yellow', 'Green']
-Color = 'RBWYG'
+Color = ['Red', 'Blue', 'White', 'Yellow', 'Green']
+
+
+class CardLostCity:
+    def __init__(self, color, num):
+        self.color = color
+        self.num = num
+
+    def __repr__(self):
+        return self.color[0]+str(self.num)
+
+    def __gt__(self, other):
+        if not isinstance(other, CardLostCity):
+            raise TypeError('Card can only be compared with card.')
+        if self.color[0] == other.color[0] and self.num > other.num:
+            return True
+        else:
+            return False
+
+    def __eq__(self, other):
+        if not isinstance(other, CardLostCity):
+            raise TypeError('Card can only be compared with card.')
+        if self.color[0] == other.color[0] and self.num == other.num:
+            return True
+        else:
+            return False
+
+    def __ge__(self, other):
+        if not isinstance(other, CardLostCity):
+            raise TypeError('Card can only be compared with card.')
+        return self > other or self == other
 
 
 class DeckLostCity:
@@ -11,10 +40,10 @@ class DeckLostCity:
         self.max_number = max_number
         self.cards = []
         for color_id in range(self.color_number):
-            self.cards.extend([Color[color_id]+str(0)]*self.double_number +
-                              [Color[color_id]+str(p) for p in range(self.max_number)])
+            self.cards.extend([CardLostCity(color=Color[color_id], num=0)]*self.double_number
+                              + [CardLostCity(color=Color[color_id], num=p) for p in range(self.max_number)])
         random.shuffle(self.cards)
-        # print(self.cards)
+        print(self.cards)
 
     def draw_n(self, draw_number=1):
         draw_cards = []
