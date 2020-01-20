@@ -47,5 +47,6 @@ class PlayerLostCity:
             raise ValueError('You can only pick the card which is the top card of fold deck.')
 
     def get_point(self):
-        for card in self.cards_in_hand:
-            if card.color in
+        pass
+        # for card in self.cards_in_hand:
+        #     if card.color in

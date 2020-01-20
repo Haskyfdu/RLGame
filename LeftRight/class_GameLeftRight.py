@@ -170,6 +170,7 @@ class GameLeftRight:
         left_percent_mean = [0.0] * self.num_learning_rounds
         left_percent_mean_qq = [0.0] * self.num_learning_rounds
         for j in range(self.run_times):
+            print(j)
             self.restart()
             for i in range(self.num_learning_rounds):
                 self.run()
