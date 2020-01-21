@@ -14,7 +14,7 @@ class CardLostCity:
     def __gt__(self, other):
         if not isinstance(other, CardLostCity):
             raise TypeError('Card can only be compared with card.')
-        if self.color[0] == other.color[0] and self.num > other.num:
+        if self.color == other.color and self.num > other.num:
             return True
         else:
             return False
@@ -22,7 +22,7 @@ class CardLostCity:
     def __eq__(self, other):
         if not isinstance(other, CardLostCity):
             raise TypeError('Card can only be compared with card.')
-        if self.color[0] == other.color[0] and self.num == other.num:
+        if self.color == other.color and self.num == other.num:
             return True
         else:
             return False
@@ -31,6 +31,13 @@ class CardLostCity:
         if not isinstance(other, CardLostCity):
             raise TypeError('Card can only be compared with card.')
         return self > other or self == other
+
+    def __add__(self, other):
+        if not isinstance(other, CardLostCity):
+            raise TypeError('Card can only add another card.')
+        if self.color != other.color:
+            raise ValueError('Card can only add another card with the same color.')
+        return CardLostCity(color=self.color, num=self.num+other.num)
 
 
 class DeckLostCity:
