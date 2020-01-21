@@ -7,11 +7,15 @@ Alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 
 class GameLeftRight:
-    def __init__(self, mu, sigma, num_learning_rounds, run_times):
+    def __init__(self, mu, sigma, num_learning_rounds, run_times, action_num):
         self.run_times = run_times
         self.num_learning_rounds = num_learning_rounds
         self.left_times = 0
         self.right_times = 0
+        if action_num > 26:
+            raise ValueError('Too many action!')
+        else:
+            self.action_num = action_num
         self.mu = mu
         self.sigma = sigma
         self.last_state = None
@@ -23,7 +27,7 @@ class GameLeftRight:
         self.epsilon = 0.1
         self.learning_rate = 0.1
         self.Q = {'A': {'left': 0.0, 'right': 0.0},
-                  'B': {Alphabet[p]: 0.0 for p in range(26)},
+                  'B': {Alphabet[p]: 0.0 for p in range(self.action_num)},
                   'end': 0.0}
         self.QQ1 = copy.deepcopy(self.Q)
         self.QQ2 = copy.deepcopy(self.Q)
@@ -32,7 +36,7 @@ class GameLeftRight:
         self.left_times = 0
         self.right_times = 0
         self.Q = {'A': {'left': 0.0, 'right': 0.0},
-                  'B': {Alphabet[p]: 0.0 for p in range(26)},
+                  'B': {Alphabet[p]: 0.0 for p in range(self.action_num)},
                   'end': 0.0}
         self.QQ1 = copy.deepcopy(self.Q)
         self.QQ2 = copy.deepcopy(self.Q)
@@ -44,12 +48,12 @@ class GameLeftRight:
         if self.state == 'B':
             if random.random() > self.epsilon:
                 max_q = -99
-                for p in Alphabet:
+                for p in Alphabet[0: self.action_num-1]:
                     if self.Q[self.state][p] > max_q:
                         self.action = p
                         max_q = self.Q[self.state][p]
             else:
-                self.action = Alphabet[random.randint(0, 25)]
+                self.action = Alphabet[random.randint(0, self.action_num-1)]
         elif self.state == 'A':
             if random.random() > self.epsilon:
                 if self.Q['A']['left'] > self.Q['A']['right']:
@@ -67,12 +71,12 @@ class GameLeftRight:
         if self.state == 'B':
             if random.random() > self.epsilon:
                 max_q = -99
-                for p in Alphabet:
+                for p in Alphabet[0: self.action_num-1]:
                     if self.QQ1[self.state][p] + self.QQ2[self.state][p] > max_q:
                         self.action = p
                         max_q = self.QQ1[self.state][p] + self.QQ2[self.state][p]
             else:
-                self.action = Alphabet[random.randint(0, 25)]
+                self.action = Alphabet[random.randint(0, self.action_num-1)]
         elif self.state == 'A':
             if random.random() > self.epsilon:
                 if self.QQ1['A']['left']+self.QQ2['A']['left'] \
@@ -103,7 +107,7 @@ class GameLeftRight:
             else:
                 raise ValueError
         elif self.state == 'B':
-            if self.action in Alphabet:
+            if self.action in Alphabet[0: self.action_num]:
                 self.last_state, self.last_action = 'B', self.action
                 self.state = 'end'
                 self.reward = random.gauss(self.mu, self.sigma)
@@ -116,7 +120,7 @@ class GameLeftRight:
         if self.state == 'end':
             new = self.Q['end']
         elif self.state == 'B':
-            new = max([self.Q['B'][p] for p in Alphabet])
+            new = max([self.Q['B'][p] for p in Alphabet[0: self.action_num-1]])
         else:
             raise ValueError
         self.Q[self.last_state][self.last_action] = \
@@ -132,7 +136,7 @@ class GameLeftRight:
             max_q2 = -99
             action_q1 = 'A'
             action_q2 = 'A'
-            for p in Alphabet:
+            for p in Alphabet[0: self.action_num-1]:
                 if self.QQ1['B'][p] > max_q1:
                     action_q1 = p
                     max_q1 = self.QQ1['B'][p]
@@ -188,5 +192,8 @@ class GameLeftRight:
 
 if __name__ == '__main__':
 
-    Game = GameLeftRight(mu=-0.1, sigma=1.0, num_learning_rounds=5000, run_times=1000)
+    Game = GameLeftRight(mu=-0.1, sigma=1.0,
+                         num_learning_rounds=5000,
+                         run_times=1000,
+                         action_num=10)
     Game.learning()
