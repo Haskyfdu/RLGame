@@ -6,6 +6,7 @@ class LostCity:
     def __init__(self, color_number, double_number, max_number):
         self.player1 = None
         self.player2 = None
+        self.players = [self.player1, self.player2]
         self.color_number = color_number
         self.double_number = double_number
         self.max_number = max_number
@@ -17,11 +18,20 @@ class LostCity:
                                  max_number=self.max_number)
         self.player1 = PlayerLostCity()
         self.player2 = PlayerLostCity()
+        self.players = [self.player1, self.player2]
         self.player1.draw_n(deck=self.deck, draw_n=8)
         self.player2.draw_n(deck=self.deck, draw_n=8)
 
-    def get_action(self):
+    def get_actions(self):
         pass
+
+    def get_actions_step1(self, player_id):
+        handcards = self.players[player_id].get_hand()
+        for card in handcards:
+
+
+
+
 
     def step(self, action):
         pass
