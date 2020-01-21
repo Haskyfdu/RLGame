@@ -12,6 +12,7 @@ class PlayerLostCity:
         self.points_dict_opponent = {}
         self.points_dict_hand = {}
         self.points_dict_left = {}
+        self.points_dict_fold = {}
         self.score = 0
 
     def get_hand(self):
@@ -40,6 +41,8 @@ class PlayerLostCity:
                 max_number_now_own = 0
             else:
                 max_number_now_own = self.cards_on_field_own[Color[p]][-1]
+            for num in range(max_number_now_own, max_number+1):
+                if
 
     def draw_n(self, deck, draw_n=1):
         self.cards_in_hand.extend(deck.draw_n(draw_number=draw_n))
