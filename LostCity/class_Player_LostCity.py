@@ -74,7 +74,7 @@ class PlayerLostCity:
                 del self.cards_in_hand[card_index]
                 return True, 'legal'
             else:
-                return False, 'You can only paly the card bigger than the card on field.'
+                return False, 'You can only play the card bigger than the card on field.'
         else:
             return False, 'You can‘t play the card which is not in your hand.'
 
