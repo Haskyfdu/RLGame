@@ -1,6 +1,6 @@
 class PlayerWarlock:
-    def __init__(self, warlock_life=30000):
-        self.life = warlock_life
+    def __init__(self, warlock_hp=30000):
+        self.life = warlock_hp
         # intellect, citical, haste, mastery, versatility,
         # self.intellect = intellect
         # self.citical = citical
@@ -8,8 +8,8 @@ class PlayerWarlock:
         # self.mastery = mastery
         # self.versatility = versatility
         self.position = [0, 0]
-        self.ashes = 2.0
-        self.gcd = 1.0                  # global cool down
+        self.ashes = 2
+        self.gcd = 5               # global cool down
         self.cd = {'deflagration': 0, 'dark_soul': 0}
         self.buff = {'deflagration_buff': {'available_times': 0, 'remaining_duration': 0},
                      'dark_soul_buff': {'remaining_duration': 0}}
@@ -32,41 +32,43 @@ class PlayerWarlock:
 
     """脑残箭"""
     def chaos_bolt(self):
-        if self.ashes >= 2:
-            self.ashes -= 2
+        if self.ashes >= 20:
+            self.ashes -= 20
         else:
             raise ValueError('Your ashes are insufficient.')
         damage = 3000
-        cast_time = 2.0
+        cast_time = 10
         if self.buff['dark_soul_buff']['remaining_duration'] > cast_time:
             damage *= 1.5
-        return {'damage': damage, 'caat_time': cast_time}
+        return {'damage': damage, 'cast_time': cast_time}
 
     """爆燃"""
     def deflagration(self):
-        self.ashes = max(5, self.ashes+0.3)
+        self.ashes = min(50, self.ashes+3)
         damage = 500
         cast_time = 0
-        self.buff['deflagration_buff'] = {'available_times': 2, 'remaining_duration': 30}
-        self.cd['deflagration'] = 8
-        return {'damage': damage, 'caat_time': cast_time}
+        self.buff['deflagration_buff'] = {'available_times': 2, 'remaining_duration': 150}
+        self.cd['deflagration'] = 40
+        return {'damage': damage, 'cast_time': cast_time}
 
     """烧尽"""
     def burn_out(self):
-        self.ashes = max(5, self.ashes + 0.2)
+        self.ashes = min(50, self.ashes + 2)
         damage = 500
-        cast_time = 1
+        cast_time = 5
         if self.buff['deflagration_buff']['available_times'] > 0:
-            cast_time *= 0.6
+            cast_time = 3
             self.buff['deflagration_buff']['available_times'] -= 1
-        return {'damage': damage, 'caat_time': cast_time}
+            if self.buff['deflagration_buff']['available_times'] == 0:
+                self.buff['deflagration_buff']['remaining_duration'] = 0
+        return {'damage': damage, 'cast_time': cast_time}
 
     def dark_soul(self):
         damage = 0
         cast_time = 0
-        self.cd['dark_soul'] = 120
-        self.buff['dark_soul_buff']['remaining_duration'] = 25
-        return {'damage': damage, 'caat_time': cast_time}
+        self.cd['dark_soul'] = 600
+        self.buff['dark_soul_buff']['remaining_duration'] = 125
+        return {'damage': damage, 'cast_time': cast_time}
 
     # """献祭 dot"""
     # def immolate(self):
