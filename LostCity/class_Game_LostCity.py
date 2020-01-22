@@ -24,10 +24,13 @@ class LostCity:
 
     def get_actions(self):
         pass
+    # todo
 
     def get_actions_step1(self, player_id):
         handcards = self.players[player_id].get_hand()
         for card in handcards:
+            pass
+        # todo
 
 
 
