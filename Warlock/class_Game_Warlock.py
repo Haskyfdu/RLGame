@@ -16,7 +16,15 @@ class GameWarlock(Game):
         #               'deflagration_buff_times': 0,
         #               'deflagration_buff': 0,
         #               'deflagration_cd': 0}
-        self.state = (self.warlock.ashes, 0, 0, 0, 0, 0)
+        self.real_state = (self.warlock.ashes, 0, 0, 0, 0, 0)
+        self.state = (self.real_state[0],
+                      self.real_state[1] > 0,
+                      self.real_state[1] > 15,
+                      self.real_state[2] > 0,
+                      self.real_state[2] > 200,
+                      self.real_state[3],
+                      self.real_state[4] > 0,
+                      self.real_state[5] > 0)
         self.debug_info = None
 
     def reset(self):
@@ -29,7 +37,15 @@ class GameWarlock(Game):
         #               'deflagration_buff_times': 0,
         #               'deflagration_buff': 0,
         #               'deflagration_cd': 0}
-        self.state = (self.warlock.ashes, 0, 0, 0, 0, 0)
+        self.real_state = (self.warlock.ashes, 0, 0, 0, 0, 0)
+        self.state = (self.real_state[0],
+                      self.real_state[1] > 0,
+                      self.real_state[1] > 15,
+                      self.real_state[2] > 0,
+                      self.real_state[2] > 200,
+                      self.real_state[3],
+                      self.real_state[4] > 0,
+                      self.real_state[5] > 0)
 
     def one_move(self, action):
         if action == 'burn_out':
@@ -63,12 +79,20 @@ class GameWarlock(Game):
         #               'deflagration_buff_times': self.warlock.buff['deflagration_buff']['available_times'],
         #               'deflagration_buff': self.warlock.buff['deflagration_buff']['remaining_duration'],
         #               'deflagration_cd': self.warlock.cd['deflagration']}
-        self.state = (self.warlock.ashes,
-                      self.warlock.buff['dark_soul_buff']['remaining_duration'],
-                      self.warlock.cd['dark_soul'],
-                      self.warlock.buff['deflagration_buff']['available_times'],
-                      self.warlock.buff['deflagration_buff']['remaining_duration'],
-                      self.warlock.cd['deflagration'])
+        self.real_state = (self.warlock.ashes,
+                           self.warlock.buff['dark_soul_buff']['remaining_duration'],
+                           self.warlock.cd['dark_soul'],
+                           self.warlock.buff['deflagration_buff']['available_times'],
+                           self.warlock.buff['deflagration_buff']['remaining_duration'],
+                           self.warlock.cd['deflagration'])
+        self.state = (self.real_state[0],
+                      self.real_state[1] > 0,
+                      self.real_state[1] > 15,
+                      self.real_state[2] > 0,
+                      self.real_state[2] > 200,
+                      self.real_state[3],
+                      self.real_state[4] > 0,
+                      self.real_state[5] > 0)
         return self.state, self.reward, self.is_terminal, self.debug_info
 
     def available_actions(self, state=None):

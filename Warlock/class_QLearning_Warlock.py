@@ -88,10 +88,11 @@ class QLearning:
                 action = self.get_action()
                 self.update(action=action)
         self.show_policy()
+        print(len(self.Q))
         print('battle_duration: ', self.game.battle_duration)
 
 
 if __name__ == '__main__':
 
-    Hasky = QLearning(game=GameWarlock(boss_hp=100000), num_learning_rounds=100000)
+    Hasky = QLearning(game=GameWarlock(boss_hp=100000), num_learning_rounds=1000000)
     Hasky.run()

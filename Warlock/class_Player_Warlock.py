@@ -8,7 +8,7 @@ class PlayerWarlock:
         # self.mastery = mastery
         # self.versatility = versatility
         self.position = [0, 0]
-        self.ashes = 2
+        self.ashes = 20
         self.gcd = 5               # global cool down
         self.cd = {'deflagration': 0, 'dark_soul': 0}
         self.buff = {'deflagration_buff': {'available_times': 0, 'remaining_duration': 0},
