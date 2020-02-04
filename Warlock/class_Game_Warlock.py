@@ -1,5 +1,5 @@
 from Warlock.class_Player_Warlock import PlayerWarlock
-from game import Game
+from class_Game import Game
 
 
 class GameWarlock(Game):

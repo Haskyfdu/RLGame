@@ -94,5 +94,5 @@ class QLearning:
 
 if __name__ == '__main__':
 
-    Hasky = QLearning(game=GameWarlock(boss_hp=100000), num_learning_rounds=1000000)
+    Hasky = QLearning(game=GameWarlock(boss_hp=100000), num_learning_rounds=100000000)
     Hasky.run()
