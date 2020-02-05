@@ -30,7 +30,6 @@ class PlayerWarlock:
     #     else:
     #         raise ValueError('Move in an unknown direction.')
 
-    """脑残箭"""
     def chaos_bolt(self):
         if self.ashes >= 20:
             self.ashes -= 20
