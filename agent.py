@@ -34,7 +34,7 @@ class Agent:
             reward_ls.append(reward)
         return state_ls, reward_ls
 
-    def policy_eval_on(self, policy, n_episodes=10 ** 5):
+    def policy_eval_on(self, policy, n_episodes=10**5):
         """Using Monte-Carlo to evaluate a given policy.
         :param policy (dict) -- only consider deterministic policy, action = policy[state]
         """

@@ -39,6 +39,7 @@ class PlayerWarlock:
         cast_time = 10
         if self.buff['dark_soul_buff']['remaining_duration'] > cast_time:
             damage *= 1.5
+        cast_time = self.check_deflagration_buff(cast_time)
         return {'damage': damage, 'cast_time': cast_time}
 
     """爆燃"""
@@ -48,6 +49,7 @@ class PlayerWarlock:
         cast_time = 0
         self.buff['deflagration_buff'] = {'available_times': 2, 'remaining_duration': 150}
         self.cd['deflagration'] = 40
+        print('use it!')
         return {'damage': damage, 'cast_time': cast_time}
 
     """烧尽"""
@@ -55,11 +57,7 @@ class PlayerWarlock:
         self.ashes = min(50, self.ashes + 2)
         damage = 500
         cast_time = 5
-        if self.buff['deflagration_buff']['available_times'] > 0:
-            cast_time = 3
-            self.buff['deflagration_buff']['available_times'] -= 1
-            if self.buff['deflagration_buff']['available_times'] == 0:
-                self.buff['deflagration_buff']['remaining_duration'] = 0
+        cast_time = self.check_deflagration_buff(cast_time)
         return {'damage': damage, 'cast_time': cast_time}
 
     def dark_soul(self):
@@ -68,6 +66,14 @@ class PlayerWarlock:
         self.cd['dark_soul'] = 600
         self.buff['dark_soul_buff']['remaining_duration'] = 125
         return {'damage': damage, 'cast_time': cast_time}
+
+    def check_deflagration_buff(self, cast_time):
+        if self.buff['deflagration_buff']['available_times'] > 0:
+            cast_time = round(cast_time * 0.6)
+            self.buff['deflagration_buff']['available_times'] -= 1
+            if self.buff['deflagration_buff']['available_times'] == 0:
+                self.buff['deflagration_buff']['remaining_duration'] = 0
+        return cast_time
 
     # """献祭 dot"""
     # def immolate(self):
