@@ -1,6 +1,7 @@
 from matplotlib import pyplot as plt
 from typing import List
 from copy import deepcopy
+import json
 
 Scatter_markers = ['s', 'o', '^', '8', 'p', 'd', 'v', 'h', '>', '<']
 Scatter_colors = ['c', 'b', 'g', 'm',
@@ -224,16 +225,24 @@ class Puzzle:
 
 if __name__ == '__main__':
 
+    ans = []
+    p_list = [Piece(p) for p in PieceBasicData]
     for u in range(-4, 5):
         for v in range(9 - abs(u)):
-            problem = (u, v)
 
-            p_list = [Piece(p) for p in PieceBasicData]
+            problem = (u, v)
             puzzle = Puzzle(p_list, problem)
             puzzle.solve()
+
             print(problem, len(puzzle.status_list[12]))
+            ans.append({problem: len(puzzle.status_list[12])})
+
             if len(puzzle.status_list[12]) > 0:
-                png_name = str(problem[0])+','+str(problem[1])+'-ans.png'
-                puzzle.show_ans(puzzle.puzzle_status, png_name)
+                for w in range(len(puzzle.status_list[12])):
+                    png_name = str(problem[0]) + ',' + str(problem[1]) + \
+                               '-' + str(w+1).zfill(2) + '-ans.png'
+                    the_ans = puzzle.status_list[12][w]['puzzle_status']
+                    puzzle.show_ans(the_ans, png_name)
 
-
+    with open('puzzle_ans.json', 'w') as f:
+        json.dump(ans, f)
