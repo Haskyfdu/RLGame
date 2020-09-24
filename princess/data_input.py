@@ -1,6 +1,6 @@
 import json
 import pandas as pd
-from priecess.class_InterProgramming import IntegerProgramming
+from princess.class_InterProgramming import IntegerProgramming
 
 BossHp = [600, 800, 1000, 1200, 1000, 1000]
 # 每个boss的血量
