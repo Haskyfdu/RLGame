@@ -190,7 +190,7 @@ class Puzzle:
                                  'puzzle_status': puzzle_status}]}
         for i in range(13):
             self.status_list[i+1] = []
-            # print(i, len(self.status_list[i]))
+            print(i, len(self.status_list[i]))
             for status in self.status_list[i]:
                 self.puzzle_status = deepcopy(status['puzzle_status'])
                 self.steps = status['steps']
@@ -224,25 +224,32 @@ class Puzzle:
 
 
 if __name__ == '__main__':
+    #
+    # ans = []
+    # p_list = [Piece(p) for p in PieceBasicData]
+    # for u in range(-4, 5):
+    #     for v in range(9 - abs(u)):
+    #
+    #         problem = (u, v)
+    #         puzzle = Puzzle(p_list, problem)
+    #         puzzle.solve()
+    #
+    #         print(problem, len(puzzle.status_list[12]))
+    #         ans.append({problem: len(puzzle.status_list[12])})
+    #
+    #         if len(puzzle.status_list[12]) > 0:
+    #             for w in range(len(puzzle.status_list[12])):
+    #                 png_name = str(problem[0]) + ',' + str(problem[1]) + \
+    #                            '-' + str(w+1).zfill(2) + '-ans.png'
+    #                 the_ans = puzzle.status_list[12][w]['puzzle_status']
+    #                 puzzle.show_ans(the_ans, png_name)
+    #
+    # with open('puzzle_ans.json', 'w') as f:
+    #     json.dump(ans, f)
 
-    ans = []
     p_list = [Piece(p) for p in PieceBasicData]
-    for u in range(-4, 5):
-        for v in range(9 - abs(u)):
+    problem = (0, 3)
+    puzzle = Puzzle(p_list, problem)
+    puzzle.solve()
 
-            problem = (u, v)
-            puzzle = Puzzle(p_list, problem)
-            puzzle.solve()
-
-            print(problem, len(puzzle.status_list[12]))
-            ans.append({problem: len(puzzle.status_list[12])})
-
-            if len(puzzle.status_list[12]) > 0:
-                for w in range(len(puzzle.status_list[12])):
-                    png_name = str(problem[0]) + ',' + str(problem[1]) + \
-                               '-' + str(w+1).zfill(2) + '-ans.png'
-                    the_ans = puzzle.status_list[12][w]['puzzle_status']
-                    puzzle.show_ans(the_ans, png_name)
-
-    with open('puzzle_ans.json', 'w') as f:
-        json.dump(ans, f)
+    puzzle.show_ans(puzzle.status_list[12][0]['puzzle_status'], 'haha.png')
