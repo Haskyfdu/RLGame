@@ -1,0 +1,26 @@
+#province_city_selector {
+    background-color: #fff;
+    padding:0 10px;
+    border: 1px solid silver;
+    box-shadow: 2px 2px 2px 1px silver;
+    position: absolute;
+    font-size: 13px;
+    right: 10px;
+    top: 10px;
+    border-radius: 3px;
+    line-height: 50px;
+}
+
+
+#info_window {
+    background-color: #fff;
+    padding:0 10px;
+    border: 1px solid silver;
+    box-shadow: 2px 2px 2px 1px silver;
+    position: absolute;
+  	font-size: 13px;
+	top: 100px;
+	right: 10px;
+    border-radius: 3px;
+    line-height: 25px;
+}

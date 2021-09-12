@@ -1,22 +1,30 @@
 import random
+from typing import List
 
-Suit_list = ['Spade', 'Heart', 'Diamond', 'Club']
-Suit_dict = {'Spade': '♠', 'Heart': '♥', 'Diamond': '♦', 'Club': '♣',
+
+Suit_List = ['Spade', 'Heart', 'Diamond', 'Club']
+
+Suit_Abbreviation = {'S': 'Spade', 'H': 'Heart',
+                     'D': 'Diamond', 'C': 'Club', 'T': 'Trump'}
+
+Suit_Dict = {'Spade': '♠', 'Heart': '♥',
+             'Diamond': '♦', 'Club': '♣',
              'RedJoker': 'RJ', 'BlackJoker': 'BJ'}
+
 Number = ['2', '3', '4', '5', '6', '7', '8',
           '9', '10', 'J', 'Q', 'K', 'A', '']
 
 
 class Cards:
     def __init__(self, suit, num=15):
-        if suit in Suit_list:
-            self.suit = suit
-            self.num = num
-            self.value = num + 20*Suit_list.index(suit)
+        self.suit = suit
+        self.num = num
+        self.trump = False
+        if suit in Suit_List:
+            self.value = num + 20*Suit_List.index(suit)
         elif suit in ['RedJoker', 'BlackJoker']:
-            self.suit = suit
-            self.num = num
             self.value = 1000 - ['RedJoker', 'BlackJoker'].index(suit)
+            self.trump = True
         else:
             raise ValueError('Unknown Suit!')
 
@@ -27,13 +35,13 @@ class Cards:
             return False
 
     def __repr__(self):
-        return Suit_dict[self.suit]+Number[self.num-2]
+        return Suit_Dict[self.suit]+Number[self.num-2]
 
 
 class Deck80:
     def __init__(self):
         self.deck = []
-        for suit in Suit_list:
+        for suit in Suit_List:
             for num in range(2, 15):
                 self.deck.extend([Cards(suit, num), Cards(suit, num)])
         self.deck.extend([Cards('RedJoker'), Cards('RedJoker'),
@@ -50,6 +58,14 @@ class GameSet80:
     def __init__(self, bookmaker, trump_suit, trump_num):
         poker = Deck80()
         poker.shuffle()
+        if trump_suit in Suit_List+['No Trump', 'NT', 'nt']:
+            self.trump_suit = trump_suit
+        elif trump_suit in 'SHDCshdc' and len(trump_suit) == 1:
+            self.trump_suit = Suit_Abbreviation[trump_suit.upper()]
+        else:
+            raise ValueError('Unknown Trump Suit!')
+        self.trump_num = trump_num
+        BasicAction80.set_value(poker.deck, trump_suit=trump_suit, trump_num=trump_num)
         self.bookmaker = bookmaker
         self.players_hands = {'me': poker.deck[0:25],
                               'opponent': poker.deck[25:50],
@@ -60,27 +76,20 @@ class GameSet80:
         self.sorted_players_hands = {}
         self.score_in_hands = {}
 
-        self.trump_suit = trump_suit
-        self.trump_num = trump_num
-
     def sort_hands(self):
         for person in ['opponent', 'previous', 'me', 'next']:
             hands = self.players_hands[person]
             score_in_hands = 0
             for card in hands:
-                if card.num == self.trump_num:
-                    card.value = 500
-                if card.suit == self.trump_suit:
-                    card.value += 200
                 if card.num == 5:
                     score_in_hands += 5
                 elif card.num == 10 or card.num == 13:
                     score_in_hands += 10
-            trump = [p for p in hands if p.value >= 101]
-            club = [p for p in hands if 100 >= p.value >= 61]
-            diamond = [p for p in hands if 60 >= p.value >= 41]
-            heart = [p for p in hands if 40 >= p.value >= 21]
-            spade = [p for p in hands if 20 >= p.value >= 1]
+            trump = [p for p in hands if p.trump is True]
+            club = [p for p in hands if p.suit == 'Club' and p.trump is False]
+            diamond = [p for p in hands if p.suit == 'Diamond' and p.trump is False]
+            heart = [p for p in hands if p.suit == 'Heart' and p.trump is False]
+            spade = [p for p in hands if p.suit == 'Spade' and p.trump is False]
             hands = [trump, club, diamond, heart, spade]
             name = ['Trump', 'Club', 'Diamond', 'Heart', 'Spade']
             sorted_hands = {}
@@ -111,6 +120,23 @@ class GameSet80:
             bury_list.reverse()
             for k in bury_list:
                 del self.sorted_players_hands[self.bookmaker][suit][k]
+
+
+class BasicAction80:
+    def __init__(self, trump_suit, trump_num, cards):
+        self.trump_suit = trump_suit
+        self.trump_num = trump_num
+        self.cards = cards
+
+    @classmethod
+    def set_value(cls, cards: List[Cards], trump_num: int, trump_suit: str):
+        for card in cards:
+            if card.num == trump_num:
+                card.value += 500
+                card.trump = True
+            if card.suit == trump_suit:
+                card.value += 200
+                card.trump = True
 
 
 if __name__ == '__main__':

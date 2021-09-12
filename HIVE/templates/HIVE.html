@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HIVE test</title>
+</head>
+<body onload=selector_initialization()>
+
+<h1 style="text-align:center;">HIVE</h1>
+
+<div id="container"></div>
+
+<div id="selector">
+    Player：<label for="player"></label><select id="player" style="width: 95px; height: 25px"></select> &nbsp;&nbsp;
+    Action：<label for="action"></label><select id="action" style="width: 95px; height: 25px"
+                                               onchange="Action_selector(this.value)"></select> &nbsp;&nbsp;
+    Piece：<label for="piece"></label><select id="piece" style="width: 95px; height: 25px"
+                                             onchange="city_selector(this.value)"></select> &nbsp;
+    Destination：<label for="destination"></label><select id="destination" style="width: 95px; height: 25px"
+                                                         onchange="hex_selector(this.value)"></select> &nbsp;
+    <button style="width: 100px; height: 40px" onchange="Action_selector(this.value)"> Confirm </button> &nbsp;&nbsp;
+</div>
+
+<img src="../static/img/queenbee.png" alt="GameBoard" width="268" height="244">
+
+</body>
+
+<script type="text/javascript" src="../static/jquery.js"></script><!--read data package-->
+<script type="text/javascript" src="../static/selector.js"></script><!--selector-->
+
+</html>

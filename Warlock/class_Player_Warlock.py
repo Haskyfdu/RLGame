@@ -38,7 +38,8 @@ class PlayerWarlock:
         damage = 3000
         cast_time = 10
         if self.buff['dark_soul_buff']['remaining_duration'] > cast_time:
-            damage *= 1.5
+            damage *= 10000
+            print('WOW!')
         cast_time = self.check_deflagration_buff(cast_time)
         return {'damage': damage, 'cast_time': cast_time}
 
@@ -49,7 +50,7 @@ class PlayerWarlock:
         cast_time = 0
         self.buff['deflagration_buff'] = {'available_times': 2, 'remaining_duration': 150}
         self.cd['deflagration'] = 40
-        print('use it!')
+        # print('use it!')
         return {'damage': damage, 'cast_time': cast_time}
 
     """烧尽"""
@@ -64,7 +65,7 @@ class PlayerWarlock:
         damage = 0
         cast_time = 0
         self.cd['dark_soul'] = 600
-        self.buff['dark_soul_buff']['remaining_duration'] = 125
+        self.buff['dark_soul_buff']['remaining_duration'] = 125000
         return {'damage': damage, 'cast_time': cast_time}
 
     def check_deflagration_buff(self, cast_time):
