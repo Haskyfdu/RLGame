@@ -12,12 +12,9 @@ class Piece:
         self.uuid = shortuuid.uuid()
 
     def __repr__(self):
-        return "{0}-{1}: {2}\n".format(self.name, self.player, self.location)
+        return f"{self.name}-{self.player}: {self.location}-{self.layer}\n"
 
     def place(self, location):
         self.on_field = True
-        self.location = location
-
-    def move(self, location):
         self.location = location
 

@@ -1,5 +1,5 @@
-from matplotlib import pyplot as plt
 from HIVE.algorithms.class_Player import Player
+from HIVE.algorithms.chessboard_manager import check_chessboard
 
 
 class HIVE:
@@ -36,4 +36,7 @@ if __name__ == '__main__':
     Game = HIVE()
     Game.place("Spider")
     Game.place("QueenBee", (0, 1))
+    Game.place("Spider", (0, -1))
+    Game.move(Game.chessboard[1], (2, 2))
+    print(check_chessboard(Game.chessboard))
 
