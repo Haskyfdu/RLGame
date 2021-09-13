@@ -1,6 +1,7 @@
 import shortuuid
 from HIVE.algorithms.chessboard_manager import around_location, one_step, check_chessboard
 
+
 class Piece:
     def __init__(self, name, player):
         self.name = name
@@ -24,15 +25,19 @@ class Piece:
         else:
             raise ValueError('Illegal Movement.')
 
-    def valid_location(self, chessboard):
-        valid_location = []
+    def cant_move(self, chessboard):
         if self.covered:
-            return valid_location
+            return True
         virtual_chessboard = chessboard.copy()
         virtual_chessboard.remove(self)
         if not check_chessboard(virtual_chessboard):
-            return valid_location
+            return True
+        return False
 
+    def valid_location(self, chessboard):
+        valid_location = []
+        if self.cant_move(chessboard):
+            return valid_location
         location_list = list(set([p.location for p in chessboard]))
         exist_neighbour = [p for p in around_location(self.location) if p in location_list]
         for neighbour in exist_neighbour:

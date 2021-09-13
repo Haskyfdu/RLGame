@@ -27,7 +27,7 @@ def check_chessboard(chessboard):
                                and p not in station_visited]
         exist_neighbour.extend(new_exist_neighbour)
         station_visited.extend(new_exist_neighbour)
-    return len(chessboard) == len(station_visited)
+    return len(location_list) == len(station_visited)
 
 
 def check_occupy(location, chessboard):

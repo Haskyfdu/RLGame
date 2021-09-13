@@ -36,7 +36,9 @@ if __name__ == '__main__':
     Game = HIVE()
     Game.place("Spider")
     Game.place("QueenBee", (0, 1))
-    Game.place("Spider", (0, -1))
-    Game.move(Game.chessboard[1], (1, 0))
+    Game.place("Beetle", (0, -1))
+    Game.place("Beetle", (1, 1))
+    Game.place("QueenBee", (1, -1))
+    Game.move(Game.chessboard[3], (0, 1))
     print(check_chessboard(Game.chessboard))
 
