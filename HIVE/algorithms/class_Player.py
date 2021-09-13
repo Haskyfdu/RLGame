@@ -1,47 +1,35 @@
-from HIVE.algorithms.class_Piece import Piece
-
-
-def distance(location1, location2):
-    if location1[0] > location2[0]:
-        location1, location2 = location2, location1
-    dx = abs(location1[0] - location2[0])
-    dy = abs(location1[1] - location2[1])
-    if location2[1] >= location1[1]:
-        return dx + dy
-    else:
-        return max(dx, dy)
-
-
-def around_location(location):
-    return [(location[0]+1, location[1]), (location[0]-1, location[1]),
-            (location[0], location[1]+1), (location[0], location[1]-1),
-            (location[0]-1, location[1]+1), (location[0]+1, location[1]-1)]
+from HIVE.algorithms.Pieces.class_QueenBee import QueenBee
+from HIVE.algorithms.Pieces.class_Beetle import Beetle
+from HIVE.algorithms.Pieces.class_Grasshopper import Grasshopper
+from HIVE.algorithms.Pieces.class_Spider import Spider
+from HIVE.algorithms.Pieces.class_SoldierAnt import SoldierAnt
 
 
 class Player:
-    def __init__(self, player_id):
-        self.player_id = player_id
-        self.chessboard = []
+    def __init__(self, player):
+        self.player = player
         self.pieces_on_field = []
-        self.hands = {'QueenBee': 1, 'Beetle': 2, 'Grasshopper': 3,
-                      'Spider': 2, 'SoldierAnt': 3}
+        self.hands = self.set_hands()
 
-    def update_chessboard(self, other):
-        self.chessboard = self.pieces_on_field + other.pieces_on_field
+    def set_hands(self):
+        hands = [QueenBee(self.player),
+                 Beetle(self.player), Beetle(self.player),
+                 Grasshopper(self.player), Grasshopper(self.player), Grasshopper(self.player),
+                 Spider(self.player), Spider(self.player),
+                 SoldierAnt(self.player), SoldierAnt(self.player), SoldierAnt(self.player)]
+        return hands
 
     def place(self, piece_name, location):
-        if piece_name not in self.hands:
-            raise KeyError('unknown piece name')
-        elif self.hands[piece_name] == 0:
-            raise ValueError("You don't have more {0}".format(piece_name))
+        available_piece = [p for p in self.hands if p.name == piece_name and not p.on_field]
+        if len(available_piece) == 0:
+            raise KeyError(f'No {piece_name} is available')
         else:
-            valid_location = self.valid_place_location()
-            if location in valid_location:
-                piece = Piece(piece_name, location, self.player_id)
-                self.pieces_on_field.append(piece)
-                self.hands[piece_name] -= 1
-            else:
-                raise ValueError('Illegal placement.')
+            piece = available_piece[0]
+        valid_location = self.valid_place_location()
+        if location in valid_location:
+            piece.place(location)
+        else:
+            raise ValueError(f'Illegal placement {location}.')
 
     def valid_place_location(self):
         if len(self.pieces_on_field) == 0:
