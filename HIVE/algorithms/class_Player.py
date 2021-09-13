@@ -31,6 +31,7 @@ class Player:
             piece.place(location)
         else:
             raise ValueError(f'Illegal placement {location}.')
+        self.pieces_on_field.append(piece)
         chessboard.append(piece)
 
     def valid_place_location(self, chessboard):
@@ -40,9 +41,8 @@ class Player:
             return [(0, 1)]
         else:
             valid_location, location_list = [], []
-            for piece in self.pieces:
-                if piece.on_field:
-                    location_list.extend(around_location(piece.location))
+            for piece in self.pieces_on_field:
+                location_list.extend(around_location(piece.location))
             location_list = list(set(location_list))
             opponent_pieces = [p for p in chessboard if p.player != self.player and not p.covered]
             for location in location_list:
