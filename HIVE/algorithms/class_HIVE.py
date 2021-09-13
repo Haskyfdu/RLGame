@@ -19,7 +19,12 @@ class HIVE:
             raise ValueError('Unknown Player.')
 
     def move(self, piece, location):
-        piece.move(location, self.chessboard)
+        player = piece.player
+        queenbee = [p for p in player.pieces if p.name == 'QueenBee'][0]
+        if queenbee.on_field:
+            piece.move(location, self.chessboard)
+        else:
+            raise ValueError("You can't move pieces without QueenBee on field")
 
     def show(self):
         print(self.chessboard)
