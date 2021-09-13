@@ -1,5 +1,5 @@
 from HIVE.algorithms.Pieces.class_Piece import Piece
-from HIVE.algorithms.chessboard_manager import one_step, check_chessboard, check_occupy
+from HIVE.algorithms.chessboard_manager import around_location, one_step, check_chessboard
 
 
 class QueenBee(Piece):
@@ -14,6 +14,14 @@ class QueenBee(Piece):
         virtual_chessboard.remove(self)
         if not check_chessboard(virtual_chessboard):
             return valid_location
+
+        location_list = list(set([p.location for p in chessboard]))
+        exist_neighbour = [p for p in around_location(self.location) if p in location_list]
+        for neighbour in exist_neighbour:
+            valid_location.extend(one_step(self.location, neighbour, chessboard))
+        # print(valid_location)
+        return valid_location
+
 
 
 

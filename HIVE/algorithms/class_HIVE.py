@@ -37,6 +37,6 @@ if __name__ == '__main__':
     Game.place("Spider")
     Game.place("QueenBee", (0, 1))
     Game.place("Spider", (0, -1))
-    Game.move(Game.chessboard[1], (2, 2))
+    Game.move(Game.chessboard[1], (1, 0))
     print(check_chessboard(Game.chessboard))
 

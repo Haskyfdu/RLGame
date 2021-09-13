@@ -19,13 +19,12 @@ def around_location(location):
 def check_chessboard(chessboard):
     location_list = list(set([p.location for p in chessboard]))
     begin_station = location_list[0]
-    neighbour = around_location(begin_station)
-    exist_neighbour = [p for p in neighbour if p in location_list]
+    exist_neighbour = [p for p in around_location(begin_station) if p in location_list]
     station_visited = [begin_station] + exist_neighbour
     while len(exist_neighbour) > 0:
         station = exist_neighbour.pop(0)
-        neighbour = around_location(station)
-        new_exist_neighbour = [p for p in neighbour if p in location_list and p not in station_visited]
+        new_exist_neighbour = [p for p in around_location(station) if p in location_list
+                               and p not in station_visited]
         exist_neighbour.extend(new_exist_neighbour)
         station_visited.extend(new_exist_neighbour)
     return len(chessboard) == len(station_visited)

@@ -18,3 +18,12 @@ class Piece:
         self.on_field = True
         self.location = location
 
+    def move(self, location, chessboard):
+        if location in self.valid_location(chessboard):
+            self.location = location
+        else:
+            raise ValueError('Illegal Movement.')
+
+    def valid_location(self, chessboard):
+        return []
+
