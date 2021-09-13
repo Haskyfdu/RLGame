@@ -7,6 +7,8 @@ class Piece:
         self.player = player
         self.location = None
         self.on_field = False
+        self.layer = 0
+        self.covered = False
         self.uuid = shortuuid.uuid()
 
     def __repr__(self):

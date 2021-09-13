@@ -4,17 +4,28 @@ from HIVE.algorithms.class_Player import Player
 
 class HIVE:
     def __init__(self):
-        self.player1 = Player('Hasky')
-        self.player2 = Player('Hattie')
+        self.Black = Player('Black')
+        self.White = Player('White')
         self.winner = None
-        self.pieces_list = None
+        self.chessboard = []
+        self.turn = 'White'
+
+    def place(self, player, piece_name, location):
+        if player == 'Black':
+            self.Black.place(piece_name, location, self.chessboard)
+        elif player == 'White':
+            self.White.place(piece_name, location, self.chessboard)
+        else:
+            raise ValueError('Unknown Player.')
+
+    def move(self, piece, location):
+        piece.move(location, self.chessboard)
 
     def show(self):
-        pass
+        print(self.chessboard)
 
 
 if __name__ == '__main__':
 
-    plt.scatter([1, 2, 3, 4], [1, 1, 1, 1], marker='h', s=15000, c='r')
-    plt.scatter([1, 2], [1, 1], marker='h', s=[800] * 2, c='b')
-    plt.show()
+    Game = HIVE()
+
