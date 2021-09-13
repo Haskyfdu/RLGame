@@ -14,6 +14,6 @@ class Grasshopper(Piece):
         for direction in chart:
             location = (self.location[0]+direction[0], self.location[1]+direction[1])
             while check_occupy(location, chessboard):
-                location = (location[0] + direction[0], location[1] + direction[1])
+                location = (location[0]+direction[0], location[1]+direction[1])
             valid_location.append(location)
         return []

@@ -43,5 +43,5 @@ class Piece:
         for neighbour in exist_neighbour:
             valid_location.extend(one_step(self.location, neighbour, chessboard))
         # print(valid_location)
-        return valid_location
+        return list(set(valid_location))
 
