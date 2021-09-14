@@ -1,5 +1,5 @@
 from HIVE.algorithms.Pieces.class_Piece import Piece
-from HIVE.algorithms.chessboard_manager import around_location, right_left_door
+from HIVE.algorithms.chessboard_manager import around_location, right_left_door, Chart
 
 
 class Beetle(Piece):
@@ -40,11 +40,10 @@ class Beetle(Piece):
             raise ValueError('Beetle Layer Bug!')
 
     def right_left_doors_layer(self, move_location, chessboard):
-        chart = [(0, 1), (1, 0), (1, -1), (0, -1), (-1, 0), (-1, 1)]
         relative_position = (move_location[0] - self.location[0], move_location[1] - self.location[1])
-        i, j = right_left_door(relative_position, chart)
-        right_door = (self.location[0] + chart[i][0], self.location[1] + chart[i][1])
-        left_door = (self.location[0] + chart[j][0], self.location[1] + chart[j][1])
+        i, j = right_left_door(relative_position)
+        right_door = (self.location[0] + Chart[i][0], self.location[1] + Chart[i][1])
+        left_door = (self.location[0] + Chart[j][0], self.location[1] + Chart[j][1])
         right_door_layer = len([p for p in chessboard if p.location == right_door])
         left_door_layer = len([p for p in chessboard if p.location == left_door])
         return right_door_layer, left_door_layer
@@ -57,8 +56,8 @@ class Beetle(Piece):
         super().move(location, chessboard)
         self.layer = len(covered_pieces)
         uncovered_pieces = [p for p in chessboard if p.location == old_location]
-        uncovered_pieces.sort(key=lambda x: x.layer)
         if len(uncovered_pieces) > 0:
+            uncovered_pieces.sort(key=lambda x: x.layer)
             uncovered_pieces[-1].covered = False
 
 

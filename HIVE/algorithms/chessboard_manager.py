@@ -1,4 +1,7 @@
 
+Chart = [(0, 1), (1, 0), (1, -1), (0, -1), (-1, 0), (-1, 1)]
+
+
 def distance(location1, location2):
     if location1[0] > location2[0]:
         location1, location2 = location2, location1
@@ -11,9 +14,8 @@ def distance(location1, location2):
 
 
 def around_location(location):
-    chart = [(0, 1), (1, 0), (1, -1), (0, -1), (-1, 0), (-1, 1)]
     neighbour = []
-    for move in chart:
+    for move in Chart:
         neighbour.append((location[0] + move[0], location[1] + move[1]))
     return neighbour
 
@@ -40,22 +42,28 @@ def check_occupy(location, chessboard):
         return False
 
 
-def one_step(move_location, fix_location, chessboard):
-    if distance(move_location, fix_location) != 1:
+def one_step(current_location, fix_location, chessboard, mode='both'):
+    if distance(current_location, fix_location) != 1:
         raise ValueError('No Adjacent!')
-    chart = [(0, 1), (1, 0), (1, -1), (0, -1), (-1, 0), (-1, 1)]
-    relative_position = (move_location[0] - fix_location[0], move_location[1] - fix_location[1])
-    i, j = right_left_door(relative_position, chart)
+    relative_position = (current_location[0]-fix_location[0], current_location[1]-fix_location[1])
+    i, j = right_left_door(relative_position)
     ans = []
-    # i: clockwise j: anticlockwise
-    for p in [i, j]:
-        location = (fix_location[0]+chart[p][0], fix_location[1]+chart[p][1])
+    if mode == 'both':
+        d = [i, j]
+    elif mode == 'clockwise':
+        d = [i]
+    elif mode == 'anticlockwise':
+        d = [j]
+    else:
+        raise ValueError('Unknown Mode.')
+    for p in d:
+        location = (fix_location[0]+Chart[p][0], fix_location[1]+Chart[p][1])
         door = (relative_position[0]+location[0], relative_position[1]+location[1])
         if not check_occupy(location, chessboard) and not check_occupy(door, chessboard):
             ans.append(location)
     return ans
 
 
-def right_left_door(relative_position, chart):
-    k = chart.index(relative_position)
+def right_left_door(relative_position):
+    k = Chart.index(relative_position)
     return (k + 1) % 6, k - 1

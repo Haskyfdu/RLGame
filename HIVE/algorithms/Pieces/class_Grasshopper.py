@@ -1,5 +1,5 @@
 from HIVE.algorithms.Pieces.class_Piece import Piece
-from HIVE.algorithms.chessboard_manager import check_occupy
+from HIVE.algorithms.chessboard_manager import check_occupy, Chart
 
 
 class Grasshopper(Piece):
@@ -10,8 +10,7 @@ class Grasshopper(Piece):
         valid_location = []
         if super().cant_move(chessboard):
             return valid_location
-        chart = [(0, 1), (1, 0), (1, -1), (0, -1), (-1, 0), (-1, 1)]
-        for direction in chart:
+        for direction in Chart:
             location = (self.location[0]+direction[0], self.location[1]+direction[1])
             while check_occupy(location, chessboard):
                 location = (location[0]+direction[0], location[1]+direction[1])
