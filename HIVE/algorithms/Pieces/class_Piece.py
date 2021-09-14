@@ -38,8 +38,8 @@ class Piece:
         valid_location = []
         if self.cant_move(chessboard):
             return valid_location
-        location_list = list(set([p.location for p in chessboard]))
-        exist_neighbour = [p for p in around_location(self.location) if p in location_list]
+        exist_neighbour = [p for p in chessboard if p.location in around_location(self.location)
+                           and p.layer == self.layer]
         for neighbour in exist_neighbour:
             valid_location.extend(one_step(self.location, neighbour, chessboard))
         # print(valid_location)

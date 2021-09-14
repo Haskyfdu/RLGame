@@ -38,7 +38,7 @@ class Player:
         if len(chessboard) == 0:
             return [(0, 0)]
         elif len(chessboard) == 1:
-            return [(0, 1)]
+            return [(0, 1), (1, 0), (1, -1), (0, -1), (-1, 0), (-1, 1)]
         else:
             valid_location, location_list = [], []
             for piece in self.pieces_on_field:

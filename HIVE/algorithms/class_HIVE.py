@@ -22,7 +22,7 @@ class HIVE:
         player = self.White if self.white_turn else self.Black
         queenbee = [p for p in player.pieces if p.name == 'QueenBee'][0]
         if queenbee.on_field:
-            piece.move(location, self.chessboard)
+            player.move(piece, location, self.chessboard)
         else:
             raise ValueError("You can't move pieces without QueenBee on field")
         self.white_turn = not self.white_turn

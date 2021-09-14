@@ -11,9 +11,11 @@ def distance(location1, location2):
 
 
 def around_location(location):
-    return [(location[0]+1, location[1]), (location[0]-1, location[1]),
-            (location[0], location[1]+1), (location[0], location[1]-1),
-            (location[0]-1, location[1]+1), (location[0]+1, location[1]-1)]
+    chart = [(0, 1), (1, 0), (1, -1), (0, -1), (-1, 0), (-1, 1)]
+    neighbour = []
+    for move in chart:
+        neighbour.append((location[0] + move[0], location[1] + move[1]))
+    return neighbour
 
 
 def check_chessboard(chessboard):
@@ -41,10 +43,9 @@ def check_occupy(location, chessboard):
 def one_step(move_location, fix_location, chessboard):
     if distance(move_location, fix_location) != 1:
         raise ValueError('No Adjacent!')
-    relative_position = (move_location[0]-fix_location[0], move_location[1]-fix_location[1])
     chart = [(0, 1), (1, 0), (1, -1), (0, -1), (-1, 0), (-1, 1)]
-    k = chart.index(relative_position)
-    i, j = (k+1) % 6, k-1
+    relative_position = (move_location[0] - fix_location[0], move_location[1] - fix_location[1])
+    i, j = right_left_door(relative_position, chart)
     ans = []
     # i: clockwise j: anticlockwise
     for p in [i, j]:
@@ -54,3 +55,7 @@ def one_step(move_location, fix_location, chessboard):
             ans.append(location)
     return ans
 
+
+def right_left_door(relative_position, chart):
+    k = chart.index(relative_position)
+    return (k + 1) % 6, k - 1

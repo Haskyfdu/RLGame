@@ -5,5 +5,8 @@ class SoldierAnt(Piece):
     def __init__(self, player):
         super().__init__('SoldierAnt', player)
 
-    def valid_location(self, game):
-        pass
+    def valid_location(self, chessboard):
+        valid_location = []
+        if super().cant_move(chessboard):
+            return valid_location
+        
