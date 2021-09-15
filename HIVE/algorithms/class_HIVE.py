@@ -40,5 +40,8 @@ if __name__ == '__main__':
     Game.place("Beetle", (1, 1))
     Game.place("QueenBee", (1, -1))
     Game.move(Game.chessboard[3], (0, 1))
+    Game.place("SoldierAnt", (-1, -1))
+    Game.place("SoldierAnt", (0, 2))
+    Game.move(Game.chessboard[5], (0, 3))
     print(check_chessboard(Game.chessboard))
 
