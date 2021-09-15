@@ -60,6 +60,30 @@ class Player:
             raise ValueError(f"You can only move your pieces.")
         piece.move(location, chessboard)
 
+    def action_pool(self, chessboard):
+        action_pool = []
+        queenbee = self.pieces[0]
+        for piece in self.pieces:
+            if piece.on_field:
+                if queenbee.on_field:
+                    move_pool = piece.valid_location(chessboard)
+                    for location in move_pool:
+                        action_pool.append((piece, location, 'move'))
+            else:
+                place_pool = self.valid_place_location(chessboard)
+                for location in place_pool:
+                    action_pool.append((piece, location, 'place'))
+        return action_pool
+
+    def lose(self, chessboard):
+        queenbee = self.pieces[0]
+        if queenbee.on_field:
+            location_list = list(set([p.location for p in chessboard]))
+            exist_neighbour = [p for p in around_location(queenbee.location) if p in location_list]
+            return len(exist_neighbour) == 6
+        else:
+            return False
+
 
 if __name__ == '__main__':
 
