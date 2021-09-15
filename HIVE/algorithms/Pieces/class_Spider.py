@@ -29,3 +29,6 @@ class Spider(Piece):
         # print(route_dict[2])
         return list(set(valid_location))
 
+    def show(self, piece_color='darkgoldenrod'):
+        super().show(piece_color)
+

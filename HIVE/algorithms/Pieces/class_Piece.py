@@ -1,4 +1,8 @@
 import shortuuid
+import numpy as np
+import matplotlib.pyplot as plt
+
+
 from HIVE.algorithms.chessboard_manager import around_location, one_step, check_chessboard
 
 
@@ -45,3 +49,16 @@ class Piece:
         # print(valid_location)
         return list(set(valid_location))
 
+    def show(self, piece_color):
+        center = ((self.location[0]*2+self.location[1])*np.cos(np.pi/6)+self.layer*0.05,
+                  self.location[1]*(1+np.sin(np.pi/6))+self.layer*0.05)
+        theta = np.linspace(0, 2 * np.pi, 7) + np.pi / 2
+        x = np.cos(theta) + center[0]
+        y = np.sin(theta) + center[1]
+        fill_color = 'k' if self.player == 'Black' else 'Bisque'
+        plt.plot(x, y, color='w')
+        plt.fill(x, y, fill_color)
+        x = 0.3*np.cos(theta) + center[0]
+        y = 0.3*np.sin(theta) + center[1]
+        plt.plot(x, y, color=piece_color)
+        plt.fill(x, y, piece_color)

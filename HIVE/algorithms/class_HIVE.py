@@ -1,5 +1,8 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+
 from HIVE.algorithms.class_Player import Player
-from HIVE.algorithms.chessboard_manager import check_chessboard
 
 
 class HIVE:
@@ -28,7 +31,11 @@ class HIVE:
         self.white_turn = not self.white_turn
 
     def show(self):
-        print(self.chessboard)
+        self.chessboard.sort(key=lambda x: x.layer)
+        for piece in self.chessboard:
+            piece.show()
+        plt.axis('equal')
+        plt.show()
 
 
 if __name__ == '__main__':
@@ -44,5 +51,8 @@ if __name__ == '__main__':
     Game.place("Spider", (0, 2))
     Game.move(Game.chessboard[5], (-1, 0))
     Game.move(Game.chessboard[6], (2, -1))
+    Game.move(Game.chessboard[2], (0, 0))
+    Game.place("Beetle", (0, 2))
+    Game.move(Game.chessboard[2], (0, 1))
+    Game.move(Game.chessboard[-1], (0, 1))
     Game.show()
-

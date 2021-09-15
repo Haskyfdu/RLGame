@@ -40,6 +40,7 @@ class SoldierAnt(Piece):
         # print(valid_location)
         return valid_location
 
-
+    def show(self, piece_color='blue'):
+        super().show(piece_color)
 
 

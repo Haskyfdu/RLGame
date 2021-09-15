@@ -60,5 +60,6 @@ class Beetle(Piece):
             uncovered_pieces.sort(key=lambda x: x.layer)
             uncovered_pieces[-1].covered = False
 
-
+    def show(self, piece_color='purple'):
+        super().show(piece_color)
 

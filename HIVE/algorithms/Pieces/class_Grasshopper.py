@@ -16,3 +16,6 @@ class Grasshopper(Piece):
                 location = (location[0]+direction[0], location[1]+direction[1])
             valid_location.append(location)
         return []
+
+    def show(self, piece_color='green'):
+        super().show(piece_color)
