@@ -75,14 +75,21 @@ class Player:
                     action_pool.append((piece, location, 'place'))
         return action_pool
 
-    def lose(self, chessboard):
+    def queenbee_health(self, chessboard):
         queenbee = self.pieces[0]
         if queenbee.on_field:
             location_list = list(set([p.location for p in chessboard]))
             exist_neighbour = [p for p in around_location(queenbee.location) if p in location_list]
-            return len(exist_neighbour) == 6
+            health = 6 - len(exist_neighbour)
         else:
-            return False
+            health = 6
+        return health
+
+    def lose(self, chessboard):
+        return self.queenbee_health(chessboard) == 0
+
+    def attack_score(self, chessboard):
+        action_pool = self.action_pool(chessboard)
 
 
 if __name__ == '__main__':
