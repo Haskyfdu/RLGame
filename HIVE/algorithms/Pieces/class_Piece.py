@@ -14,6 +14,7 @@ class Piece:
         self.on_field = False
         self.layer = 0
         self.covered = False
+        self.attack = 0
         self.uuid = shortuuid.uuid()
 
     def __repr__(self):

@@ -5,6 +5,7 @@ from HIVE.algorithms.chessboard_manager import around_location, one_step
 class SoldierAnt(Piece):
     def __init__(self, player):
         super().__init__('SoldierAnt', player)
+        self.attack = 2
 
     def valid_location(self, chessboard):
         if len(super().valid_location(chessboard)) == 0:

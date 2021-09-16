@@ -5,6 +5,7 @@ from HIVE.algorithms.chessboard_manager import check_occupy, Chart
 class Grasshopper(Piece):
     def __init__(self, player):
         super().__init__('Grasshopper', player)
+        self.attack = 1
 
     def valid_location(self, chessboard):
         valid_location = []
@@ -15,7 +16,7 @@ class Grasshopper(Piece):
             while check_occupy(location, chessboard):
                 location = (location[0]+direction[0], location[1]+direction[1])
             valid_location.append(location)
-        return []
+        return list(set(valid_location))
 
     def show(self, piece_color='green'):
         super().show(piece_color)

@@ -5,6 +5,7 @@ from HIVE.algorithms.chessboard_manager import one_step, around_location
 class Spider(Piece):
     def __init__(self, player):
         super().__init__('Spider', player)
+        self.attack = 1
 
     def valid_location(self, chessboard):
         route_list = [[self.location, p] for p in super().valid_location(chessboard)]
