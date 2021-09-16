@@ -41,7 +41,7 @@ class HIVE:
         player = self.White if self.turn % 2 == 0 else self.Black
         queenbee = [p for p in player.pieces if p.name == 'QueenBee'][0]
         action_pool = []
-        if not queenbee.on_field and self.turn >= 7:
+        if not queenbee.on_field and self.turn >= 6:
             place_pool = player.valid_place_location(self.chessboard)
             for location in place_pool:
                 action_pool.append((queenbee, location, 'place'))

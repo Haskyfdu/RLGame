@@ -13,9 +13,12 @@ class Grasshopper(Piece):
             return valid_location
         for direction in Chart:
             location = (self.location[0]+direction[0], self.location[1]+direction[1])
+            d = 0
             while check_occupy(location, chessboard):
+                d += 1
                 location = (location[0]+direction[0], location[1]+direction[1])
-            valid_location.append(location)
+            if d >= 1:
+                valid_location.append(location)
         return list(set(valid_location))
 
     def show(self, piece_color='green'):

@@ -76,7 +76,7 @@ class Player:
         return action_pool
 
     def queenbee_health(self, chessboard, opponent=None):
-        opponent_queenbee, queenbee = opponent.pieces[0], self.pieces[0]
+        queenbee = self.pieces[0]
         health, opponent_health = None, None
         if queenbee.on_field:
             location_list = list(set([p.location for p in chessboard]))
@@ -85,30 +85,32 @@ class Player:
         else:
             health = 6
         if opponent is not None:
+            opponent_queenbee = opponent.pieces[0]
             if opponent_queenbee.on_field:
                 location_list = list(set([p.location for p in chessboard]))
                 exist_neighbour = [p for p in around_location(opponent_queenbee.location) if p in location_list]
                 opponent_health = 6 - len(exist_neighbour)
             else:
                 opponent_health = 6
+        # print(health, opponent_health)
         return health, opponent_health
 
     def lose(self, chessboard):
         return self.queenbee_health(chessboard)[0] == 0
 
-    def attack_score(self, chessboard, opponent):
-        score = 0
-        opponent_queenbee, queenbee = opponent.pieces[0], self.pieces[0]
-        location_list = around_location(opponent_queenbee.location) if opponent_queenbee.on_field else []
-        for piece in self.pieces:
-            if piece.on_field:
-                if piece.location in location_list+[opponent_queenbee.location]:
-                    pass
-                elif piece.cant_move(chessboard) and piece.location not in location_list+[opponent_queenbee.location]:
-                    score -= piece.attack
-                elif queenbee.on_field and :
-                    score += piece.attack
-        return score
+    # def attack_score(self, chessboard, opponent):
+    #     score = 0
+    #     opponent_queenbee, queenbee = opponent.pieces[0], self.pieces[0]
+    #     location_list = around_location(opponent_queenbee.location) if opponent_queenbee.on_field else []
+    #     for piece in self.pieces:
+    #         if piece.on_field:
+    #             if piece.location in location_list+[opponent_queenbee.location]:
+    #                 pass
+    #             elif piece.cant_move(chessboard) and piece.location not in location_list+[opponent_queenbee.location]:
+    #                 score -= piece.attack
+    #             elif queenbee.on_field and :
+    #                 score += piece.attack
+    #     return score
 
     def defense(self, chessboard, opponent):
         score = 0
