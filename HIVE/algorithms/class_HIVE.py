@@ -70,7 +70,7 @@ class HIVE:
             self.next_turn()
             self.check_win()
             print(self.turn)
-        self.show()
+            self.show()
 
 
 if __name__ == '__main__':
