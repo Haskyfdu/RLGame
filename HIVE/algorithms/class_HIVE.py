@@ -13,14 +13,6 @@ class HIVE:
         self.chessboard = []
         self.turn = 0
 
-    def place(self, piece_name, location=(0, 0)):
-        player = self.White if self.turn % 2 == 0 else self.Black
-        player.place(piece_name, location, self.chessboard)
-
-    def move(self, piece, location):
-        player = self.White if self.turn % 2 == 0 else self.Black
-        player.move(piece, location, self.chessboard)
-
     def show(self):
         self.chessboard.sort(key=lambda x: x.layer)
         for piece in self.chessboard:
@@ -31,22 +23,11 @@ class HIVE:
     def next_turn(self):
         player = self.White if self.turn % 2 == 0 else self.Black
         opponent = self.White if self.turn % 2 == 1 else self.Black
-        queenbee = player.queenbee
-        action_pool = []
-        if not queenbee.on_field and self.turn >= 6:
-            place_pool = player.get_valid_place_location(self.chessboard)
-            for location in place_pool:
-                action_pool.append((queenbee, location, 'place'))
-        else:
-            action_pool = player.action_pool(self.chessboard)
-        if len(action_pool) == 0:
-            self.turn += 1
-        else:
-            action = player.best_action(self.chessboard, opponent, action_pool)
-            if action[-1] == 'place':
-                self.place(action[0].name, action[1])
-            elif action[-1] == 'move':
-                self.move(action[0], action[1])
+        action_pool = player.enumerate_action_pool(self.chessboard)
+        if len(action_pool) >= 0:
+            action = random.choice(action_pool)
+            player.play(action, self.chessboard)
+        self.turn += 1
 
     def check_win(self):
         if self.White.lose(self.chessboard):
@@ -58,7 +39,7 @@ class HIVE:
             self.winner = 'White'
 
     def play(self):
-        while self.winner is None:
+        while self.winner is None and self.turn < 30:
             self.next_turn()
             self.check_win()
             print(self.turn)

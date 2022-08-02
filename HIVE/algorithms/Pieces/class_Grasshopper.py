@@ -7,7 +7,7 @@ class Grasshopper(Piece):
         super().__init__('Grasshopper', player)
         self.attack = 30
 
-    def valid_location(self, chessboard):
+    def valid_target_location(self, chessboard):
         valid_location = []
         if super().cant_move(chessboard):
             return valid_location

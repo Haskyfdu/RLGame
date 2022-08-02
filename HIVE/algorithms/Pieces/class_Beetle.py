@@ -7,7 +7,7 @@ class Beetle(Piece):
         super().__init__('Beetle', player)
         self.attack = 40
 
-    def valid_location(self, chessboard):
+    def valid_target_location(self, chessboard):
         valid_location = []
         if self.cant_move(chessboard):
             return []
@@ -23,7 +23,7 @@ class Beetle(Piece):
                     valid_location.append(move_location)
             return valid_location
         elif self.layer == 0:
-            valid_location = super().valid_location(chessboard)
+            valid_location = super().valid_target_location(chessboard)
             for move_location in get_neighbours(self.location):
                 right_door_layer, left_door_layer = self.right_left_doors_layer(move_location, chessboard)
                 move_location_layer = len([p for p in chessboard if p.location == move_location])

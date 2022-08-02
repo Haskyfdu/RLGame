@@ -7,8 +7,8 @@ class SoldierAnt(Piece):
         super().__init__('SoldierAnt', player)
         self.attack = 50
 
-    def valid_location(self, chessboard):
-        if len(super().valid_location(chessboard)) == 0:
+    def valid_target_location(self, chessboard):
+        if len(super().valid_target_location(chessboard)) == 0:
             return []
         valid_location = []
         start_location, current_location = self.location, self.location

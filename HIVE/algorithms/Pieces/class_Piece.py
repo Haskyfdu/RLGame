@@ -25,7 +25,7 @@ class Piece:
         self.location = location
 
     def move(self, location, chessboard):
-        if location in self.valid_location(chessboard):
+        if location in self.valid_target_location(chessboard):
             self.location = location
         else:
             raise ValueError('Illegal Movement.')
@@ -39,7 +39,7 @@ class Piece:
             return True
         return False
 
-    def valid_location(self, chessboard):
+    def valid_target_location(self, chessboard):
         valid_location = []
         if self.cant_move(chessboard):
             return valid_location

@@ -7,8 +7,8 @@ class Spider(Piece):
         super().__init__('Spider', player)
         self.attack = 20
 
-    def valid_location(self, chessboard):
-        route_list = [[self.location, p] for p in super().valid_location(chessboard)]
+    def valid_target_location(self, chessboard):
+        route_list = [[self.location, p] for p in super().valid_target_location(chessboard)]
         if len(route_list) == 0:
             return []
         route_dict = {0: route_list, 1: [], 2: []}
