@@ -39,6 +39,7 @@ class HIVE:
 
     def next_turn(self):
         player = self.White if self.turn % 2 == 0 else self.Black
+        opponent = self.White if self.turn % 2 == 1 else self.Black
         queenbee = [p for p in player.pieces if p.name == 'QueenBee'][0]
         action_pool = []
         if not queenbee.on_field and self.turn >= 6:
@@ -50,7 +51,7 @@ class HIVE:
         if len(action_pool) == 0:
             self.turn += 1
         else:
-            action = random.choice(action_pool)
+            action = player.best_action(self.chessboard, opponent, action_pool)
             if action[-1] == 'place':
                 self.place(action[0].name, action[1])
             elif action[-1] == 'move':

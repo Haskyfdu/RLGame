@@ -5,12 +5,12 @@ from HIVE.algorithms.chessboard_manager import around_location, right_left_door,
 class Beetle(Piece):
     def __init__(self, player):
         super().__init__('Beetle', player)
-        self.attack = 2
+        self.attack = 40
 
     def valid_location(self, chessboard):
         valid_location = []
         if self.cant_move(chessboard):
-            return valid_location
+            return []
         if self.layer >= 2:
             return around_location(self.location)
         elif self.layer == 1:

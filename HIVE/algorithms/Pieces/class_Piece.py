@@ -18,7 +18,7 @@ class Piece:
         self.uuid = shortuuid.uuid()
 
     def __repr__(self):
-        return f"{self.name}-{self.player}: {self.location}-{self.layer}\n"
+        return f"{self.name}-{self.player}: {self.location}-{self.layer}"
 
     def place(self, location):
         self.on_field = True
@@ -63,3 +63,8 @@ class Piece:
         y = 0.3*np.sin(theta) + center[1]
         plt.plot(x, y, color=piece_color)
         plt.fill(x, y, piece_color)
+
+    def copy(self):
+        piece = Piece(self.name, self.player)
+        piece.__dict__.update(self.__dict__)
+        return piece
