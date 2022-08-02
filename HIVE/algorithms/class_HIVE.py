@@ -15,20 +15,11 @@ class HIVE:
 
     def place(self, piece_name, location=(0, 0)):
         player = self.White if self.turn % 2 == 0 else self.Black
-        queenbee = [p for p in player.pieces if p.name == 'QueenBee'][0]
-        if not queenbee.on_field and self.turn >= 7 and piece_name != "QueenBee":
-            raise ValueError('You have to place QueenBee in the first four turn.')
         player.place(piece_name, location, self.chessboard)
-        self.turn += 1
 
     def move(self, piece, location):
         player = self.White if self.turn % 2 == 0 else self.Black
-        queenbee = [p for p in player.pieces if p.name == 'QueenBee'][0]
-        if queenbee.on_field:
-            player.move(piece, location, self.chessboard)
-        else:
-            raise ValueError("You can't move pieces without QueenBee on field")
-        self.turn += 1
+        player.move(piece, location, self.chessboard)
 
     def show(self):
         self.chessboard.sort(key=lambda x: x.layer)
@@ -40,10 +31,10 @@ class HIVE:
     def next_turn(self):
         player = self.White if self.turn % 2 == 0 else self.Black
         opponent = self.White if self.turn % 2 == 1 else self.Black
-        queenbee = [p for p in player.pieces if p.name == 'QueenBee'][0]
+        queenbee = player.queenbee
         action_pool = []
         if not queenbee.on_field and self.turn >= 6:
-            place_pool = player.valid_place_location(self.chessboard)
+            place_pool = player.get_valid_place_location(self.chessboard)
             for location in place_pool:
                 action_pool.append((queenbee, location, 'place'))
         else:

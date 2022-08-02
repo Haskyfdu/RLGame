@@ -1,5 +1,5 @@
 from HIVE.algorithms.Pieces.class_Piece import Piece
-from HIVE.algorithms.chessboard_manager import one_step, around_location
+from HIVE.algorithms.chessboard_manager import basic_one_step, get_neighbours
 
 
 class Spider(Piece):
@@ -17,10 +17,10 @@ class Spider(Piece):
         for step in range(2):
             for route in route_dict[step]:
                 current_location = route[-1]
-                exist_neighbour = [p for p in virtual_chessboard if p.location in around_location(current_location)
+                exist_neighbour = [p for p in virtual_chessboard if p.location in get_neighbours(current_location)
                                    and p.layer == self.layer]
                 for neighbour in exist_neighbour:
-                    next_step = one_step(current_location, neighbour.location, virtual_chessboard)
+                    next_step = basic_one_step(current_location, neighbour.location, virtual_chessboard)
                     for location in next_step:
                         if location in route:
                             continue

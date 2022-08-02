@@ -1,5 +1,5 @@
 
-Chart = [(0, 1), (1, 0), (1, -1), (0, -1), (-1, 0), (-1, 1)]
+UnitCircle = [(0, 1), (1, 0), (1, -1), (0, -1), (-1, 0), (-1, 1)]
 
 
 def distance(location1, location2):
@@ -13,28 +13,28 @@ def distance(location1, location2):
         return max(dx, dy)
 
 
-def around_location(location):
-    neighbour = []
-    for move in Chart:
-        neighbour.append((location[0] + move[0], location[1] + move[1]))
-    return neighbour
+def get_neighbours(location):
+    neighbours = []
+    for move in UnitCircle:
+        neighbours.append((location[0] + move[0], location[1] + move[1]))
+    return neighbours
 
 
-def check_chessboard(chessboard):
+def chessboard_connectivity(chessboard):
     location_list = list(set([p.location for p in chessboard]))
-    begin_station = location_list[0]
-    exist_neighbour = [p for p in around_location(begin_station) if p in location_list]
-    station_visited = [begin_station] + exist_neighbour
+    station = location_list[0]
+    exist_neighbour = [p for p in get_neighbours(station) if p in location_list]
+    station_visited = [station] + exist_neighbour
     while len(exist_neighbour) > 0:
         station = exist_neighbour.pop(0)
-        new_exist_neighbour = [p for p in around_location(station) if p in location_list
+        new_exist_neighbour = [p for p in get_neighbours(station) if p in location_list
                                and p not in station_visited]
         exist_neighbour.extend(new_exist_neighbour)
         station_visited.extend(new_exist_neighbour)
     return len(location_list) == len(station_visited)
 
 
-def check_occupy(location, chessboard):
+def location_occupy(location, chessboard):
     for piece in chessboard:
         if piece.location == location:
             return True
@@ -42,11 +42,12 @@ def check_occupy(location, chessboard):
         return False
 
 
-def one_step(current_location, fix_location, chessboard, mode='both'):
-    if distance(current_location, fix_location) != 1:
+def basic_one_step(current_location, fix_neighbour_location, chessboard, mode='both'):
+    if distance(current_location, fix_neighbour_location) != 1:
         raise ValueError('No Adjacent!')
-    relative_position = (current_location[0]-fix_location[0], current_location[1]-fix_location[1])
-    i, j = right_left_door(relative_position)
+    relative_position = (current_location[0] - fix_neighbour_location[0],
+                         current_location[1] - fix_neighbour_location[1])
+    i, j = basic_step_index_on_unit_circle(relative_position)
     ans = []
     if mode == 'both':
         d = [i, j]
@@ -57,13 +58,17 @@ def one_step(current_location, fix_location, chessboard, mode='both'):
     else:
         raise ValueError('Unknown Mode.')
     for p in d:
-        location = (fix_location[0]+Chart[p][0], fix_location[1]+Chart[p][1])
-        door = (relative_position[0]+location[0], relative_position[1]+location[1])
-        if not check_occupy(location, chessboard) and not check_occupy(door, chessboard):
-            ans.append(location)
+        step = UnitCircle[p]
+        target_location = (fix_neighbour_location[0] + step[0],
+                           fix_neighbour_location[1] + step[1])
+        door = (relative_position[0]+target_location[0],
+                relative_position[1]+target_location[1])
+        if not location_occupy(target_location, chessboard) and \
+                not location_occupy(door, chessboard):
+            ans.append(target_location)
     return ans
 
 
-def right_left_door(relative_position):
-    k = Chart.index(relative_position)
+def basic_step_index_on_unit_circle(relative_position):
+    k = UnitCircle.index(relative_position)
     return (k + 1) % 6, k - 1

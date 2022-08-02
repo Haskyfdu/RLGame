@@ -1,5 +1,5 @@
 from HIVE.algorithms.Pieces.class_Piece import Piece
-from HIVE.algorithms.chessboard_manager import around_location, right_left_door, Chart
+from HIVE.algorithms.chessboard_manager import get_neighbours, basic_step_index_on_unit_circle, UnitCircle
 
 
 class Beetle(Piece):
@@ -12,9 +12,9 @@ class Beetle(Piece):
         if self.cant_move(chessboard):
             return []
         if self.layer >= 2:
-            return around_location(self.location)
+            return get_neighbours(self.location)
         elif self.layer == 1:
-            for move_location in around_location(self.location):
+            for move_location in get_neighbours(self.location):
                 right_door_layer, left_door_layer = self.right_left_doors_layer(move_location, chessboard)
                 move_location_layer = len([p for p in chessboard if p.location == move_location])
                 if right_door_layer >= 2 > move_location_layer and left_door_layer >= 2:
@@ -24,7 +24,7 @@ class Beetle(Piece):
             return valid_location
         elif self.layer == 0:
             valid_location = super().valid_location(chessboard)
-            for move_location in around_location(self.location):
+            for move_location in get_neighbours(self.location):
                 right_door_layer, left_door_layer = self.right_left_doors_layer(move_location, chessboard)
                 move_location_layer = len([p for p in chessboard if p.location == move_location])
                 if move_location_layer == 0:
@@ -42,9 +42,9 @@ class Beetle(Piece):
 
     def right_left_doors_layer(self, move_location, chessboard):
         relative_position = (move_location[0] - self.location[0], move_location[1] - self.location[1])
-        i, j = right_left_door(relative_position)
-        right_door = (self.location[0] + Chart[i][0], self.location[1] + Chart[i][1])
-        left_door = (self.location[0] + Chart[j][0], self.location[1] + Chart[j][1])
+        i, j = basic_step_index_on_unit_circle(relative_position)
+        right_door = (self.location[0] + UnitCircle[i][0], self.location[1] + UnitCircle[i][1])
+        left_door = (self.location[0] + UnitCircle[j][0], self.location[1] + UnitCircle[j][1])
         right_door_layer = len([p for p in chessboard if p.location == right_door])
         left_door_layer = len([p for p in chessboard if p.location == left_door])
         return right_door_layer, left_door_layer

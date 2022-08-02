@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-from HIVE.algorithms.chessboard_manager import around_location, one_step, check_chessboard
+from HIVE.algorithms.chessboard_manager import get_neighbours, basic_one_step, chessboard_connectivity
 
 
 class Piece:
@@ -35,7 +35,7 @@ class Piece:
             return True
         virtual_chessboard = chessboard.copy()
         virtual_chessboard.remove(self)
-        if not check_chessboard(virtual_chessboard):
+        if not chessboard_connectivity(virtual_chessboard):
             return True
         return False
 
@@ -43,10 +43,10 @@ class Piece:
         valid_location = []
         if self.cant_move(chessboard):
             return valid_location
-        exist_neighbour = [p for p in chessboard if p.location in around_location(self.location)
+        exist_neighbour = [p for p in chessboard if p.location in get_neighbours(self.location)
                            and p.layer == self.layer]
         for neighbour in exist_neighbour:
-            valid_location.extend(one_step(self.location, neighbour.location, chessboard))
+            valid_location.extend(basic_one_step(self.location, neighbour.location, chessboard))
         # print(valid_location)
         return list(set(valid_location))
 

@@ -3,7 +3,7 @@ from HIVE.algorithms.Pieces.class_Spider import Spider
 from HIVE.algorithms.Pieces.class_QueenBee import QueenBee
 from HIVE.algorithms.Pieces.class_SoldierAnt import SoldierAnt
 from HIVE.algorithms.Pieces.class_Grasshopper import Grasshopper
-from HIVE.algorithms.chessboard_manager import around_location, distance
+from HIVE.algorithms.chessboard_manager import get_neighbours, distance
 
 
 class Player:
@@ -11,6 +11,8 @@ class Player:
         self.player = player
         self.pieces_on_field = []
         self.pieces = self.set_pieces()
+        self.queenbee = self.pieces[0]
+        self.turn = 0
 
     def set_pieces(self):
         pieces = [QueenBee(self.player),
@@ -26,15 +28,16 @@ class Player:
             raise KeyError(f'No {piece_name} is available')
         else:
             piece = available_piece[0]
-        valid_location = self.valid_place_location(chessboard)
+        valid_location = self.get_valid_place_location(chessboard)
         if location in valid_location:
             piece.place(location)
         else:
             raise ValueError(f'Illegal placement {location}.')
         self.pieces_on_field.append(piece)
         chessboard.append(piece)
+        self.turn += 1
 
-    def valid_place_location(self, chessboard):
+    def get_valid_place_location(self, chessboard):
         if len(chessboard) == 0:
             return [(0, 0)]
         elif len(chessboard) == 1:
@@ -42,7 +45,7 @@ class Player:
         else:
             valid_location, location_list = [], []
             for piece in self.pieces_on_field:
-                location_list.extend(around_location(piece.location))
+                location_list.extend(get_neighbours(piece.location))
             location_list = list(set(location_list))
             opponent_pieces = [p for p in chessboard if p.player != self.player and not p.covered]
             for location in location_list:
@@ -70,7 +73,7 @@ class Player:
                     for location in move_pool:
                         action_pool.append((piece, location, 'move'))
             else:
-                place_pool = self.valid_place_location(chessboard)
+                place_pool = self.get_valid_place_location(chessboard)
                 for location in place_pool:
                     action_pool.append((piece, location, 'place'))
         return action_pool
@@ -80,7 +83,7 @@ class Player:
         health, opponent_health = None, None
         if queenbee.on_field:
             location_list = list(set([p.location for p in chessboard]))
-            exist_neighbour = [p for p in around_location(queenbee.location) if p in location_list]
+            exist_neighbour = [p for p in get_neighbours(queenbee.location) if p in location_list]
             health = 6 - len(exist_neighbour)
         else:
             health = 6
@@ -88,7 +91,7 @@ class Player:
             opponent_queenbee = opponent.pieces[0]
             if opponent_queenbee.on_field:
                 location_list = list(set([p.location for p in chessboard]))
-                exist_neighbour = [p for p in around_location(opponent_queenbee.location) if p in location_list]
+                exist_neighbour = [p for p in get_neighbours(opponent_queenbee.location) if p in location_list]
                 opponent_health = 6 - len(exist_neighbour)
             else:
                 opponent_health = 6
@@ -112,7 +115,7 @@ class Player:
             if piece.on_field:
                 if opponent_queenbee.on_field:
                     attack_range = set(piece.valid_location(chessboard))
-                    target = set(around_location(opponent_queenbee.location) + [opponent_queenbee.location])
+                    target = set(get_neighbours(opponent_queenbee.location) + [opponent_queenbee.location])
                     if not attack_range.isdisjoint(target):
                         score += piece.attack
                 else:
@@ -123,7 +126,7 @@ class Player:
             if piece.on_field:
                 if queenbee.on_field:
                     attack_range = set(piece.valid_location(chessboard))
-                    target = set(around_location(queenbee.location) + [queenbee.location])
+                    target = set(get_neighbours(queenbee.location) + [queenbee.location])
                     if not attack_range.isdisjoint(target):
                         score -= piece.attack
                 else:
@@ -132,18 +135,20 @@ class Player:
                 score -= 0 * piece.attack
         return score
 
+    @staticmethod
+    def undo(chessboard, action, old_location=None):
+        if action[-1] == 'place':
+            piece = chessboard.pop()
+            piece.on_field = False
+            piece.location = None
+        elif action[-1] == 'move':
+            piece = action[0]
+            piece.move(old_location, chessboard)
+
     def best_action(self, chessboard, opponent, action_pool):
         best_score, best_action = -999999, None
         for action in action_pool:
-            virtual_chessboard = chessboard.copy()
-            virtual_piece = action[0].copy()
-            if action[-1] == 'place':
-                virtual_piece.place(action[1])
-            elif action[-1] == 'move':
-                k = virtual_chessboard.index(action[0])
-                virtual_chessboard[k] = virtual_chessboard
-                virtual_piece.move(action[1], virtual_chessboard)
-            virtual_chessboard.append(virtual_piece)
+            self.move(action[0], action[1], chessboard)
             score = self.score(virtual_chessboard, opponent)
             print(chessboard, action, score)
             if score > best_score:
