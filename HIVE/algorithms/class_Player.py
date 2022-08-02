@@ -1,3 +1,5 @@
+import random
+
 from HIVE.algorithms.class_action import Action
 from HIVE.algorithms.Pieces.class_Beetle import Beetle
 from HIVE.algorithms.Pieces.class_Spider import Spider
@@ -10,7 +12,6 @@ from HIVE.algorithms.chessboard_manager import get_neighbours, distance
 class Player:
     def __init__(self, player):
         self.player = player
-        self.pieces_on_field = []
         self.pieces = self.set_pieces()
         self.queenbee = self.pieces[0]
         self.turn = 0
@@ -36,7 +37,6 @@ class Player:
             piece.place(target_location)
         else:
             raise ValueError(f'Illegal placement {target_location}.')
-        self.pieces_on_field.append(piece)
         chessboard.append(piece)
 
     def get_valid_place_location(self, chessboard):
@@ -46,7 +46,7 @@ class Player:
             return [(0, 1), (1, 0), (1, -1), (0, -1), (-1, 0), (-1, 1)]
         else:
             valid_location, location_list = [], []
-            for piece in self.pieces_on_field:
+            for piece in [p for p in self.pieces if p.on_field]:
                 location_list.extend(get_neighbours(piece.location))
             location_list = list(set(location_list))
             opponent_pieces = [p for p in chessboard if p.player != self.player and not p.covered]
@@ -57,7 +57,8 @@ class Player:
                         break
                 else:
                     valid_location.append(location)
-            valid_location = list(set(valid_location)-set([p.location for p in self.pieces_on_field]))
+            occupied_location = set([p.location for p in self.pieces if p.on_field])
+            valid_location = list(set(valid_location) - occupied_location)
             return valid_location
 
     def move(self, piece, target_location, chessboard):
@@ -104,24 +105,23 @@ class Player:
 
     @staticmethod
     def undo(chessboard, action, old_location=None):
-        if action[-1] == 'place':
+        if action.action_type == 'place':
             piece = chessboard.pop()
             piece.on_field = False
             piece.location = None
-        elif action[-1] == 'move':
-            piece = action[0]
+        elif action.action_type == 'move':
+            piece = action.piece
             piece.move(old_location, chessboard)
 
     def best_action(self, chessboard, opponent, action_pool):
-        best_score, best_action = -999999, None
         for action in action_pool:
             old_location = action.piece.location
             self.play(action, chessboard)
             score = self.score(chessboard, opponent)
-            self.undo(action, old_location)
-            print(chessboard, action, score)
-            if score > best_score:
-                best_action = action
+            action.score = score
+            self.undo(chessboard, action, old_location)
+        action_pool.sort(key=lambda x: x.score, reverse=True)
+        best_action = random.choice(action_pool[:8])
         return best_action
 
 

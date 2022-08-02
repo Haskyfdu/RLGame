@@ -25,7 +25,7 @@ class HIVE:
         opponent = self.White if self.turn % 2 == 1 else self.Black
         action_pool = player.enumerate_action_pool(self.chessboard)
         if len(action_pool) >= 0:
-            action = random.choice(action_pool)
+            action = player.best_action(self.chessboard, opponent, action_pool)
             player.play(action, self.chessboard)
         self.turn += 1
 
@@ -39,7 +39,7 @@ class HIVE:
             self.winner = 'White'
 
     def play(self):
-        while self.winner is None and self.turn < 30:
+        while self.winner is None and self.turn < 60:
             self.next_turn()
             self.check_win()
             print(self.turn)
