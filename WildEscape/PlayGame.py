@@ -226,7 +226,7 @@ class WildEscapePolicy:
                 tuo_list.append(tuo)
         return tuo_list
 
-    def identify_typing(self, card_typing, cards_list):
+    def identify_typing_main(self, card_typing, cards_list):
         if card_typing == 'Tsing':
             return self.identify_tsing(cards_list=cards_list, max_using_joker=2)
         elif card_typing == 'StraightFlush':
@@ -248,7 +248,7 @@ class WildEscapePolicy:
                 if current_plan[f'{card_typing}-End-Label'] is True:
                     result_plan_list.append(deepcopy(current_plan))
                 else:
-                    typing_list = self.identify_typing(card_typing, current_plan['else'])
+                    typing_list = self.identify_typing_main(card_typing, current_plan['else'])
                     if typing_list is None:
                         continue
                     for p in typing_list:
@@ -290,6 +290,48 @@ class WildEscapePolicy:
             n += 1
         return current_plan_list
 
+    @staticmethod
+    def get_full_house_plans(current_plan):
+        triple_list = current_plan['Triple']
+        pair_list = current_plan['Pair']
+        n = min(len(triple_list), len(pair_list))
+        result_plan_list = []
+        for i in range(n+1):
+            new_plan = deepcopy(current_plan)
+            for _ in range(i):
+                new_plan['FullHouse'].append(new_plan['Triple'].pop(0) + new_plan['Pair'].pop(0))
+            result_plan_list.append(new_plan)
+        return result_plan_list
+
+    @staticmethod
+    def get_trump_plan(current_plan):
+        trump_and_joker = current_plan['RedJoker'] + current_plan['BlackJoker'] + current_plan['Trump']
+        n = len(trump_and_joker)
+        ai_num = []
+        for a5 in range(n//5+1):
+            n -= 5*a5
+            for a3 in range(n//3+1):
+                n -= 3*a3
+                for a2 in range(n//2+1):
+                    ai_num.append([a5, a3, a2])
+        result_plan_list = []
+        for ai_plan in ai_num:
+            a5, a3, a2 = ai_plan
+            new_plan = deepcopy(current_plan)
+            using_trump = deepcopy(trump_and_joker)
+            for _ in range(a5):
+                new_plan['Tsing'].append(using_trump[-5:])
+                using_trump = using_trump[:-5]
+            for _ in range(a3):
+                new_plan['Triple'].append(using_trump[-3:])
+                using_trump = using_trump[:-3]
+            for _ in range(a2):
+                new_plan['Pair'].append(using_trump[-2:])
+                using_trump = using_trump[:-2]
+            new_plan['Single'].extend(using_trump)
+            result_plan_list.append(new_plan)
+        return result_plan_list
+
     def get_else_typing_plans(self, current_plan_list):
         result_plan_list = []
         for current_plan in current_plan_list:
@@ -313,35 +355,41 @@ class WildEscapePolicy:
                     current_plan['Single'].append(num_dict[str(i)][0])
             if waste_flag is False:
                 result_plan_list.append(current_plan)
+        current_plan_list = result_plan_list
+        result_plan_list = []
+        for current_plan in current_plan_list:
+            for new_plan in self.get_full_house_plans(current_plan):
+                result_plan_list.extend(self.get_trump_plan(new_plan))
         return result_plan_list
 
-    def score_plan(self, mode):
+    def score_plan(self, priority):
         for plan in self.plan_list:
-            if mode == 'score':
-                score = 10 * len(plan['RedJoker']) + 8 * len(plan['BlackJoker']) + 7 * len(plan['Trump'])
-                score += 2 * len([p for p in plan['Single'] if 13 <= p.num <= 14]) \
-                    + 1 * len([p for p in plan['Single'] if 8 <= p.num <= 12])
-                score += 2 * (8 * len([p for p in plan['Pair'] if p[0].num == 14]) +
-                              5 * len([p for p in plan['Pair'] if 11 <= p[0].num <= 13]) +
-                              2 * len([p for p in plan['Pair'] if 7 <= p[0].num <= 10]))
-                score += 3 * (9 * len([p for p in plan['Triple'] if p[0].num == 14]) +
-                              3 * len([p for p in plan['Triple'] if 11 <= p[0].num <= 13]) +
-                              2 * len([p for p in plan['Triple'] if 7 <= p[0].num <= 10]))
-                score += 5 * (10 * len([p for p in plan['Tsing'] if p[0].num > 10]) +
-                              9 * len([p for p in plan['Tsing'] if p[0].num <= 10]) +
-                              8 * len(plan['StraightFlush']) +
-                              5 * len([p for p in plan['Tuo'] if p[0].num >= 11]) +
-                              2 * len([p for p in plan['Tuo'] if 7 <= p[0].num <= 10]) +
-                              1 * len([p for p in plan['Tuo'] if p[0].num <= 6]))
-                plan['score'] = score
-            elif mode == 'less_single':
-                plan['score'] = -len(plan['Single'])
-            elif mode == 'less_round':
-                plan['score'] = -sum([len(plan[p]) for p in ['Single', 'Pair', 'Triple', 'Tsing', 'StraightFlush',
-                                                             'Tuo', 'Flush', 'Straight']])
-        self.plan_list.sort(key=lambda x: x['score'], reverse=True)
+            special_score = {'Single': {'15': 0.24, '16': 0.3, '17': 0.5},
+                             'Pair': {'15': 0.5, '16': 0.6, '17': 0.6},
+                             'Triple': {'15': 0.5, '16': 0.6, '17': 0.6}}
+            score = {'Tsing': sum([(55+p[0].value-2)/68 - 0.4 for p in plan['Tsing']]),
+                     'StraightFlush': sum([(45+min([p[i].value-i for i in range(5)])-2)/68 - 0.5
+                                           for p in plan['StraightFlush']]),
+                     'Tuo': sum([(32+p[0].value-2)/68 - 0.5 for p in plan['Tuo']]),
+                     'FullHouse': sum([(20+p[0].value-2)/68 - 0.5 for p in plan['Tsing']]),
+                     'Flush': sum([(10 + p[-1].value - 4) / 68 - 0.5 for p in plan['Flush']]),
+                     'Straight': sum([min([p[i].value - i for i in range(5)]) / 68 - 0.5
+                                      for p in plan['Straight']]),
+                     'Triple': sum([(p[0].value-3) / 14 - 0.5 if p[0].value <= 14 else
+                                    special_score['Triple'][str(p[0].value)] for p in plan['Triple']]),
+                     'Pair': sum([(p[0].value-3) / 14 - 0.5 if p[0].value <= 14 else
+                                  special_score['Pair'][str(p[0].value)] for p in plan['Pair']]),
+                     'Single': sum([(p.value-3) / 15 - 0.66 if p.value <= 14 else
+                                    special_score['Single'][str(p.value)] for p in plan['Single']])}
+            plan['score'] = {'All': round(sum(score.values()), 2),
+                             '5': round(sum([score[p] for p in ['Tsing', 'StraightFlush', 'Tuo', 'FullHouse',
+                                                                'Flush', 'Straight']]), 2),
+                             '3': round(score['Triple'], 2),
+                             '2': round(score['Pair'], 2),
+                             '1': round(score['Single'], 2)}
+        self.plan_list.sort(key=lambda x: x['score']['All'] + x['score'][priority], reverse=True)
 
-    def plan_hands(self, cards_list=None):
+    def plan_hands(self, cards_list=None, priority='5'):
         cards_list = self.cards_list if cards_list is None else cards_list
         basic_plan = {'Tsing': [], 'StraightFlush': [], 'Tuo': [], 'FullHouse': [], 'Flush': [], 'Straight': [],
                       'Tsing-End-Label': False, 'StraightFlush-End-Label': False, 'Tuo-End-Label': False,
@@ -354,18 +402,16 @@ class WildEscapePolicy:
         current_plan_list = self.get_5_typing_plans(card_typing='Straight', current_plan_list=current_plan_list)
         current_plan_list = self.get_else_typing_plans(current_plan_list)
         self.plan_list = current_plan_list
-        best_plan_pool = []
-        for mode in ['score', 'less_single', 'less_round']:
-            self.score_plan(mode)
-            best_plan_pool.extend(self.plan_list[:2])
-        self.plan_list = best_plan_pool
+        self.score_plan(priority)
 
-    def show_plan(self):
-        for i, plan in enumerate(self.plan_list):
+    def show_plan(self, n):
+        for i, plan in enumerate(self.plan_list[:n]):
             print(f"------{i}号配牌方案------")
-
+            print(plan['score'])
             for key in plan:
-                if 'Label' in key or key in ['score', 'else'] or len(plan[key]) == 0:
+                if 'Label' in key \
+                        or key in ['score', 'else', 'RedJoker', 'BlackJoker', 'Trump'] \
+                        or len(plan[key]) == 0:
                     continue
                 print(key, plan[key])
 
@@ -388,7 +434,7 @@ if __name__ == '__main__':
     for player in game.players:
         print(f"######{player.position}号选手#######")
         policy = WildEscapePolicy(player.hands)
-        policy.plan_hands()
-        policy.show_plan()
+        policy.plan_hands(priority='5')
+        policy.show_plan(10)
         print("####################")
         break
