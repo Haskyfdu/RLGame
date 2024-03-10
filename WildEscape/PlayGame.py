@@ -69,6 +69,7 @@ class WildEscapePolicy:
         input_str = input_str.upper()
         cards_list.extend([Card('RedJoker', 16) for _ in range(input_str.count('RJ'))])
         cards_list.extend([Card('BlackJoker', 15) for _ in range(input_str.count('BJ'))])
+        input_str = input_str.replace(' ', '')
         input_str = input_str.replace('RJ', '')
         input_str = input_str.replace('BJ', '')
         input_str = input_str.replace('10', 'T')
@@ -404,9 +405,9 @@ class WildEscapePolicy:
         self.plan_list = current_plan_list
         self.score_plan(priority)
 
-    def show_plan(self, n):
-        for i, plan in enumerate(self.plan_list[:n]):
-            print(f"------{i}号配牌方案------")
+    def show_plan(self, top_n):
+        for i, plan in enumerate(self.plan_list[:top_n]):
+            print(f"------{i+1}号配牌方案------")
             print(plan['score'])
             for key in plan:
                 if 'Label' in key \
@@ -427,14 +428,26 @@ class WildEscapeGame:
             person.set_hands(self.deck.cards_list[i*27:(i+1)*27])
 
 
+def main():
+    print('欢迎使用大怪路子配牌助手1.0～')
+    print('字符串识别规则: ')
+    print('1、花色用SHDC进行表示: ♠黑桃-S   ♥红桃-H   ♦方片-D   ♣草花-C')
+    print('2、相同花色的牌可以连成一串输入, 点数用数字/字母表示, 注意其中10用T表示: 123456789TJQKA 【A用1或者A表示均可】')
+    print('3、大小鬼用RJ/BJ表示')
+    print('4、字母大小写均可, 不同花色之间可以空格, 同一花色也可以多段输入【每一段都需要声明花色】')
+    print('例子: RJ bjS334556H4458JJ D99725K CT542 s789')
+    policy = WildEscapePolicy()
+    policy.identify_cards_from_string('RJ BJ S334556789 H4458JJ D99725K CT542')
+    policy.identify_cards_from_string(input('请输入您的手牌:'))
+    policy.plan_hands(priority='5')
+    policy.show_plan(top_n=5)
+
+
 if __name__ == '__main__':
 
-    game = WildEscapeGame()
-    game.deal_deck()
-    for player in game.players:
-        print(f"######{player.position}号选手#######")
-        policy = WildEscapePolicy(player.hands)
-        policy.plan_hands(priority='5')
-        policy.show_plan(10)
-        print("####################")
-        break
+    # game = WildEscapeGame()
+    # game.deal_deck()
+    # policy_test = WildEscapePolicy(cards_list=game.players[0].hands)
+    # policy_test.plan_hands(priority='5')
+    # policy_test.show_plan(top_n=5)
+    main()
